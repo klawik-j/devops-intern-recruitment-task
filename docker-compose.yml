@@ -1,0 +1,34 @@
+version: "3.9"
+services: 
+
+  test_db:
+    build:
+      context: ./test_db
+      dockerfile: Dockerfile.test_db
+    container_name: test_db_mysql
+    restart: unless-stopped
+    volumes:
+      - test_db_volume:/var/lib/mysql
+    env_file:
+      - .env
+  
+  target_db:
+    build:
+      context: ./target_db
+      dockerfile: Dockerfile.target_db
+    container_name: target_db_mysql
+    restart: unless-stopped
+    volumes:
+      - target_db_volume:/var/lib/mysql
+    env_file: 
+      - .env
+
+  script:
+    build: ./script
+    container_name: script
+    env_file: 
+      - .env
+  
+volumes:
+  test_db_volume:
+  target_db_volume:
