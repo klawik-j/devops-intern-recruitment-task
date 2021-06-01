@@ -27,7 +27,7 @@ docker-compose down
 # Part 2
 ## 1. Measure program efficiency (execution time).
 Measure program efficiency is about measure execution time of part where data query and data transfer happen. Because the rest is mostly about databases connection time, checking their structure. The time it takes is not constant and may be different every time or depend from things that can not be fully predicted like internet connection.\
-The exectution time of data transfer in first verion of program (using `Script.insert_target_db_titles()`) took on average 89s.
+The exectution time of data transfer in first verion of program (using `insert_target_db_titles()`) took on average 89s.
 
 ## 2. Profile the program and point out the main problems related to efficiency.
 At this point the main issue was that the `INSERT` statement was executed for ever row in titles table separately.\
@@ -37,7 +37,7 @@ Data query from test_db seems fine, because it is single query statement.
 Query data is handle by cursor. This way program does not store pure data, but a pointer. Table size does not affect memory consumption.
 
 ## 4. Point out efficiency issues that have been solved by you on the particular steps of code improvements and new problems appeared after improvements, if any.
-The way I improved efficiency was change in data transfer part -> `Script.insert_target_db_titles_V2()`. From now on, there is less `INSERT`. I used `cursor.executemany()`, that makes `INSERT INTO table VALUES [table of values]` rather than `INSERT INTO table VALUES (single value)`. In this case "The data values given by the parameter sequences are batched using multiple-row syntax" (~ source: [mysql docs](https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlcursor-executemany.html)). Table size does not affect memory consumption, because there can only be fetch no more than FETCH_SIZE data.
+The way I improved efficiency was change in data transfer part -> `insert_target_db_titles_v2()`. From now on, there is less `INSERT`. I used `cursor.executemany()`, that makes `INSERT INTO table VALUES [table of values]` rather than `INSERT INTO table VALUES (single value)`. In this case "The data values given by the parameter sequences are batched using multiple-row syntax" (~ source: [mysql docs](https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlcursor-executemany.html)). Table size does not affect memory consumption, because there can only be fetch no more than FETCH_SIZE data.
 
 ## 5. Compare the efficiency of the implemented optimizations (for this purpose you may use execution time) and explain which improvements solved specific problems.
 After improvment execution time took on average 11s for FETCH_SIZE=1000. 
